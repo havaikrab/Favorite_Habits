@@ -13,20 +13,21 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "").lower() == "true"
 
-USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "").lower() == "true"
+USE_TELEGRAM_INTEGRATION = os.getenv("USE_TELEGRAM_INTEGRATION", "False").lower() == "true"
+
+USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "False").lower() == "true"
 
 CURRENT_SITE = os.getenv("CURRENT_SITE", "http://localhost:8000")
 
 ALLOWED_HOSTS: list = ["localhost", "127.0.0.1"]
 
-START_WEBHOOK_PATH = CURRENT_SITE + "/users/webhook/"
+WEBHOOK_PATH = CURRENT_SITE + "/users/webhook/"
 
-if DEBUG and USE_TEST_WEBHOOK:
-    START_WEBHOOK_PATH = os.getenv("TEST_WEBHOOK_PATH", "http://localhost:8000")
-    parsed_url = urlparse(START_WEBHOOK_PATH)
-    allowed_webhook_host = parsed_url.hostname
-    ALLOWED_HOSTS.append(allowed_webhook_host)
-    START_WEBHOOK_PATH += "/users/webhook/"
+if DEBUG and USE_TELEGRAM_INTEGRATION and USE_TEST_WEBHOOK:
+    WEBHOOK_PATH = os.getenv("TEST_WEBHOOK_PATH", "http://localhost:8000")
+    parsed_url = urlparse(WEBHOOK_PATH)
+    ALLOWED_HOSTS.append(parsed_url.hostname)
+    WEBHOOK_PATH += "/users/webhook/"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_filters",
     "habits",
     "users",
 ]
@@ -114,6 +116,11 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
         "rest_framework.parsers.MultiPartParser",
         "rest_framework.parsers.FormParser",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ],
 }
 

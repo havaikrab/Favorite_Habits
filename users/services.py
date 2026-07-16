@@ -8,9 +8,9 @@ from django.core.mail import send_mail
 
 from config.settings import (
     EMAIL_HOST_USER,
-    START_WEBHOOK_PATH,
     TG_BOT_ACCESS,
     TG_BOT_LINK_HEAD,
+    WEBHOOK_PATH,
 )
 from users.models import CustomUser
 
@@ -22,7 +22,7 @@ GREETING = "Привет! Я твой бот-помощник, буду напо
 def set_tg_webhook() -> Any:
     """Передает в API телеграма адрес и токен для взаимодействия с приложением"""
 
-    url = f"https://api.telegram.org/bot{TG_BOT_ACCESS}/setWebhook?url={START_WEBHOOK_PATH}"
+    url = f"https://api.telegram.org/bot{TG_BOT_ACCESS}/setWebhook?url={WEBHOOK_PATH}"
     response = requests.get(url)
     return response.json()
 
