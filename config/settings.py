@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -12,7 +13,20 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "").lower() == "true"
 
-ALLOWED_HOSTS: list = []
+USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "").lower() == "true"
+
+CURRENT_SITE = os.getenv("CURRENT_SITE", "http://localhost:8000")
+
+ALLOWED_HOSTS: list = ["localhost", "127.0.0.1"]
+
+START_WEBHOOK_PATH = CURRENT_SITE + "/users/webhook/"
+
+if DEBUG and USE_TEST_WEBHOOK:
+    START_WEBHOOK_PATH = os.getenv("TEST_WEBHOOK_PATH", "http://localhost:8000")
+    parsed_url = urlparse(START_WEBHOOK_PATH)
+    allowed_webhook_host = parsed_url.hostname
+    ALLOWED_HOSTS.append(allowed_webhook_host)
+    START_WEBHOOK_PATH += "/users/webhook/"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -92,8 +106,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = (BASE_DIR / "static",)
 
-CURRENT_SITE = os.getenv("CURRENT_SITE", "http://localhost:8000")
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
@@ -108,3 +120,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME", 5))),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.getenv("REFRESH_TOKEN_LIFETIME", 1))),
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+TG_BOT_LINK_HEAD = os.getenv("TG_BOT_LINK", "")
+TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS")

@@ -8,10 +8,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False, verbose_name="Адрес электронной почты")
     first_name = models.CharField(blank=False, null=False, max_length=150, verbose_name="Имя")
     last_name = models.CharField(blank=False, null=False, max_length=150, verbose_name="Фамилия")
-    tg_name: models.CharField = models.CharField(blank=True, null=True, max_length=50, verbose_name="Телеграм-ник")
-    tg_chat_id: models.CharField = models.CharField(
-        blank=True, null=True, max_length=50, verbose_name="ID телеграм-чата"
-    )
+    tg_secret: models.CharField = models.CharField(max_length=16, verbose_name="Идентификатор телеграм-аккаунта")
+    tg_chat_id: models.BigIntegerField = models.BigIntegerField(blank=True, null=True, verbose_name="ID телеграм-чата")
 
     class Meta:
         """Настройки отображения"""
