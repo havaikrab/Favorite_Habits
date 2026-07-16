@@ -38,3 +38,15 @@ class CustomUserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         complete_registration(user)
         return user
+
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    """Сериализатор модели пользователя"""
+
+    # Добавить привычки
+
+    class Meta:
+        """Параметры сериализатора"""
+
+        model = CustomUser
+        fields = ("username", "email", "first_name", "last_name")
