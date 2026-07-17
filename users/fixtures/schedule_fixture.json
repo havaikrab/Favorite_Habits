@@ -1,0 +1,98 @@
+[
+{
+    "model": "habits.schedule",
+    "pk": 1,
+    "fields": {
+        "name": "В обед по выходным",
+        "habit": 10,
+        "type": "times_in_week",
+        "constant_interval": null,
+        "times_in_week": [
+            7920,
+            9360
+        ],
+        "times_in_month": null
+    }
+},
+{
+    "model": "habits.schedule",
+    "pk": 2,
+    "fields": {
+        "name": "По утрам каждый день",
+        "habit": 9,
+        "type": "times_in_week",
+        "constant_interval": null,
+        "times_in_week": [
+            420,
+            1860,
+            3300,
+            4740,
+            6180,
+            7620,
+            9060
+        ],
+        "times_in_month": null
+    }
+},
+{
+    "model": "habits.schedule",
+    "pk": 3,
+    "fields": {
+        "name": "2-го, 9-го, 15-го, 21-го, 27-го и, по возможности, 31-го числа каждый месяц",
+        "habit": 7,
+        "type": "times_in_month",
+        "constant_interval": null,
+        "times_in_week": null,
+        "times_in_month": [
+            2000,
+            12000,
+            21000,
+            30000,
+            38000,
+            43600
+        ]
+    }
+},
+{
+    "model": "habits.schedule",
+    "pk": 4,
+    "fields": {
+        "name": "Каждые 2 часа",
+        "habit": 4,
+        "type": "constant_interval",
+        "constant_interval": 120,
+        "times_in_week": null,
+        "times_in_month": null
+    }
+},
+{
+    "model": "habits.schedule",
+    "pk": 5,
+    "fields": {
+        "name": "По будням вечером",
+        "habit": 5,
+        "type": "times_in_week",
+        "constant_interval": null,
+        "times_in_week": [
+            1320,
+            2760,
+            4200,
+            5640,
+            7080
+        ],
+        "times_in_month": null
+    }
+},
+{
+    "model": "habits.schedule",
+    "pk": 3,
+    "fields": {
+        "name": "Через день в одно и то же время",
+        "habit": 2,
+        "type": "constant_interval",
+        "constant_interval": 2880,
+        "times_in_week": null,
+        "times_in_month": null
+    }
+}
+]
