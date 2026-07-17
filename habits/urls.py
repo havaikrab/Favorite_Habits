@@ -7,6 +7,6 @@ app_name = HabitsConfig.name
 
 habits_router = DefaultRouter()
 habits_router.register("habits", views.HabitViewSet)
+habits_router.register("schedule", views.ScheduleViewSet)
 
-urlpatterns: list = []
-urlpatterns += habits_router.urls
+urlpatterns = habits_router.urls

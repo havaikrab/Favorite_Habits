@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -21,10 +20,9 @@ class Habit(models.Model):
         on_delete=models.SET_NULL,
         related_name="required_habits",
         verbose_name="Связанная приятная привычка",
-        blank=True,
         null=True,
     )
-    reward: models.CharField = models.CharField(verbose_name="Вознаграждение", blank=True, null=True)
+    reward: models.CharField = models.CharField(verbose_name="Вознаграждение", null=True)
     time_needed: models.PositiveIntegerField = models.PositiveIntegerField(
         verbose_name="Время на выполнение привычки",
         validators=[
@@ -63,17 +61,16 @@ class Schedule(models.Model):
     constant_interval: models.PositiveIntegerField = models.PositiveIntegerField(
         verbose_name="Постоянный интервал в минутах",
         validators=[
-            MinValueValidator(0, message="Значение не может быть отрицательным"),
-            MaxValueValidator(10080, message="Значение не может быть больше 10080"),
+            MinValueValidator(1, message="Значение не может быть меньше 1 минуты"),
+            MaxValueValidator(10080, message="Значение не может быть больше 10080 минут"),
         ],
-        blank=True,
         null=True,
     )
     times_in_week: models.JSONField = models.JSONField(
-        verbose_name="Список значений в минутах в течение недели", default=list, blank=True
+        verbose_name="Список значений в минутах в течение недели", null=True
     )
     times_in_month: models.JSONField = models.JSONField(
-        verbose_name="Список значений в минутах в течение месяца", default=list, blank=True
+        verbose_name="Список значений в минутах в течение месяца", null=True
     )
 
     class Meta:
@@ -87,23 +84,3 @@ class Schedule(models.Model):
         """Строковое отображение объекта урока"""
 
         return str(self.name)
-
-    def clean(self) -> None:
-        """Проверяет соответствие значений времени указанному типу расписания"""
-
-        if self.type == "constant_interval":
-            if self.constant_interval is None or self.times_in_week or self.times_in_month:
-                raise ValidationError("""
-                Для данного типа расписания только одно поле constant_interval
-                должно содержать значение от 0 до 10080""")
-        if self.type == "times_in_week":
-            if self.constant_interval is not None or not self.times_in_week or self.times_in_month:
-                raise ValidationError("""
-                Для данного типа расписания только одно поле times_in_week
-                должно содержать список хотя бы с одним значением от 0 до 10080""")
-        if self.type == "times_in_month":
-            if self.constant_interval is not None or self.times_in_week or not self.times_in_month:
-                raise ValidationError("""
-                Для данного типа расписания только одно поле times_in_month
-                должно содержать список хотя бы с пятью значениями от 0 до 44640""")
-        super().clean()

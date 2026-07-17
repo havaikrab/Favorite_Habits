@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django_filters.rest_framework import BooleanFilter, FilterSet
 
-from habits.models import Habit
+from habits.models import Habit, Schedule
 
 
 class HabitFilterSet(FilterSet):
@@ -48,3 +48,13 @@ class HabitFilterSet(FilterSet):
         elif value is False:
             return queryset.filter(is_pleasant=False)
         return queryset
+
+
+class ScheduleFilterSet(FilterSet):
+    """Набор фильтров для модели привычки"""
+
+    class Meta:
+        """Параметры фильтр-сэта"""
+
+        model = Schedule
+        fields = {"name": ["icontains"], "type": ["exact"]}
