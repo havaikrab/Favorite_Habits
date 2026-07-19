@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -147,24 +148,31 @@ class ScheduleTestCase(APITestCase):
                 "name": "Произвольное время",
                 "habit": 6,
                 "type": "times_in_month",
-                "times_in_month": json.dumps([5000, 1000, 10000, 40000, 14900, 43000, 37888, 19999, 25111, 31500]),
+                "times_in_month": json.dumps([5000, 1000, 10000, 40000, 14900, 43000, 37888, 19999, 31500, 25111]),
+                "start_at": "2026-07-19T00:00:00+07:00",
             },
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(Schedule.objects.all()), 7)
+        new_schedule = Schedule.objects.get(habit__pk=6)
         self.assertEqual(
             data,
             {
-                "id": 7,
+                "id": new_schedule.pk,
                 "name": "Произвольное время",
                 "habit": 6,
                 "type": "times_in_month",
-                "times_in_month": [5000, 1000, 10000, 40000, 14900, 43000, 37888, 19999, 25111, 31500],
+                "times_in_month": [5000, 1000, 10000, 40000, 14900, 43000, 37888, 19999, 31500, 25111],
                 "constant_interval": None,
                 "times_in_week": None,
+                "start_at": "2026-07-19T00:00:00+07:00",
             },
         )
+        self.assertEqual(new_schedule.next_event, 1784728800)
+        time_zone = datetime.fromisoformat(new_schedule.start_at).tzinfo
+        date_of_next_event = datetime.isoformat(datetime.fromtimestamp(new_schedule.next_event, tz=time_zone))
+        self.assertEqual(date_of_next_event, "2026-07-22T21:00:00+07:00")
 
     def test_schedule_invalid_creating(self) -> None:
         """Тест запроса с невалидными данными на создание объекта модели Schedule"""
@@ -177,6 +185,7 @@ class ScheduleTestCase(APITestCase):
                 "habit": 6,
                 "type": "times_in_month",
                 "times_in_month": [5500, 10000, 40000, 14900, 43000, 37888, 19999, 25111, 31500],
+                "start_at": "2026-07-19T00:00:00+07:00",
             },
             format="json",
         )
@@ -202,6 +211,7 @@ class ScheduleTestCase(APITestCase):
                 "constant_interval": None,
                 "times_in_week": [1320, 2760, 4200, 5640, 7080],
                 "times_in_month": None,
+                "start_at": "2026-07-19 09:06:44.242575+07:00",
             },
         )
 
@@ -223,13 +233,12 @@ class ScheduleTestCase(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         habit_url = f"/habits/{habit.pk}/"
         response = self.client.get(habit_url)
         self.assertEqual(
             response.json(),
             {
-                "id": 6,
+                "id": habit.pk,
                 "place": "place_6",
                 "action": "action_6",
                 "is_pleasant": False,
