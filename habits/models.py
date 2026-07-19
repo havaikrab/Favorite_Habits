@@ -72,6 +72,8 @@ class Schedule(models.Model):
     times_in_month: models.JSONField = models.JSONField(
         verbose_name="Список значений в минутах в течение месяца", null=True
     )
+    start_at: models.CharField = models.CharField(verbose_name="Начало отсчета времени", max_length=32)
+    next_event: models.BigIntegerField = models.BigIntegerField(verbose_name="Следующее событие")
 
     class Meta:
         """Класс настроек отображения"""

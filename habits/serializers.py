@@ -5,7 +5,12 @@ from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
 from .models import Habit, Schedule
-from .validators import validate_month_minutes_list
+from .services import (
+    get_next_with_constant_interval,
+    get_next_with_times_in_month,
+    get_next_with_times_in_week,
+)
+from .validators import validate_iso_date_string, validate_month_minutes_list
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -68,11 +73,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
         """Параметры сериализатора"""
 
         model = Schedule
-        fields = "__all__"
+        exclude = ["next_event"]
 
     def validate(self, attrs: dict) -> dict:
         """Проверка соответствия значений времени указанному типу расписания"""
 
+        current_start = ""
         current_habit = None
         current_type = None
         current_interval = None
@@ -80,17 +86,20 @@ class ScheduleSerializer(serializers.ModelSerializer):
         current_in_month = None
         user = self.context["request"].user
         if self.instance:
+            current_start = self.instance.start_at
             current_habit = self.instance.habit
             current_type = self.instance.type
             current_interval = self.instance.constant_interval
             current_in_week = self.instance.times_in_week
             current_in_month = self.instance.times_in_month
         valid_data: dict = super().validate(attrs)
+        start_at = valid_data.get("start_at", current_start)
         habit = valid_data.get("habit", current_habit)
         schedule_type = valid_data.get("type", current_type)
         constant_interval = valid_data.get("constant_interval", current_interval)
         times_in_week = valid_data.get("times_in_week", current_in_week)
         times_in_month = valid_data.get("times_in_month", current_in_month)
+        validate_iso_date_string(start_at)
         if habit and habit.owner != user:
             raise PermissionDenied("Нельзя назначить расписание для чужой привычки")
         elif schedule_type == "constant_interval":
@@ -98,6 +107,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
                 raise ValidationError("""
                 Для данного типа расписания только одно поле constant_interval
                 должно содержать значение от 0 до 10080""")
+            valid_data["next_event"] = get_next_with_constant_interval(start_at, constant_interval)
         elif schedule_type == "times_in_week":
             if constant_interval or times_in_month or not isinstance(times_in_week, list):
                 raise ValidationError("""
@@ -109,10 +119,12 @@ class ScheduleSerializer(serializers.ModelSerializer):
                 if not isinstance(i, int) or not 1 <= i <= 10080:
                     raise ValidationError("""
                     Все значения в списке times_in_week должны быть целыми числами от 1 до 10080""")
+            valid_data["next_event"] = get_next_with_times_in_week(start_at, times_in_week)
         elif schedule_type == "times_in_month":
             if constant_interval or times_in_week or not isinstance(times_in_month, list):
                 raise ValidationError("""
                 Для данного типа расписания только одно поле times_in_month
                 должно содержать список значений""")
             validate_month_minutes_list(times_in_month)
+            valid_data["next_event"] = get_next_with_times_in_month(start_at, times_in_month)
         return valid_data

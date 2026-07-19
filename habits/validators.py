@@ -1,3 +1,5 @@
+import re
+
 from rest_framework.exceptions import ValidationError
 
 
@@ -32,3 +34,16 @@ def validate_month_minutes_list(minutes_list: list) -> list:
         должно быть указано значение, удовлетворяющее условию {34560 + sorted_minutes[0]} <= required_value <= 40320"""
         )
     return minutes_list
+
+
+def validate_iso_date_string(value: str) -> None:
+    """Проверяет, что строка соответствует формату ISO 8601 с часовым поясом и без миллисекунд.
+    Например: 2026-07-18T10:00:00+01:00"""
+
+    pattern = r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d{1,6})?([+-]\d{2}:\d{2}|Z)$"
+
+    if not re.match(pattern, value):
+        raise ValidationError("""Некорректный формат ISO-строки. Примеры ожидаемых форматов:
+        2026-07-18T10:00:00+01:00,
+        2026-07-18 10:00:00.123456-08:00,
+        2026-07-18T10:00:00Z""")
