@@ -45,11 +45,11 @@ def send_tg_bot_link(user: CustomUser, secret: str) -> None:
             fail_silently=False,
         )
     except Exception as exc:
-        logger.error("111Ошибка при обращении к SMTP-серверу: %r.", exc)
+        logger.error("Ошибка при обращении к SMTP-серверу: %r.", exc)
 
 
 def send_telegram_message(chat_id: int, message: str) -> None:
-    """Отправляет сообщение пользователю в Telegram, возвращает отметку об успешном отправлении"""
+    """Отправляет сообщение пользователю в Telegram"""
 
     url = f"https://api.telegram.org/bot{TG_BOT_ACCESS}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
