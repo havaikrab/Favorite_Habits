@@ -153,3 +153,14 @@ CELERY_RESULT_BACKEND = f"{REDIS_URL}{CELERY_RESULT_DB}"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = os.getenv("CELERY_TASK_TRACK_STARTED", "true").lower() == "true"
 CELERY_TASK_TIME_LIMIT = int(os.getenv("CELERY_TASK_TIME_LIMIT", 63))
+
+CELERY_BEAT_SCHEDULE = {
+    "scheduled_prepare_events": {
+        "task": "habits.tasks.scheduled_prepare_events",
+        "schedule": timedelta(minutes=1),
+    },
+    "execute_tg_messages_sending": {
+        "task": "habits.tasks.execute_tg_messages_sending",
+        "schedule": timedelta(seconds=1),
+    },
+}

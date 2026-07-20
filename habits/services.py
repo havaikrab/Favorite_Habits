@@ -107,7 +107,8 @@ def create_message(habit: Habit) -> str:
 
 def prepare_events() -> None:
     """Извлекает из базы данных объекты расписания,
-    связанные привычки которых должны быть выполнены в ближайшую минуту"""
+    связанные привычки которых должны быть выполнены в ближайшую минуту.
+    Сохраняет в кеше набор сообщений для рассылки пользователям через telegram."""
 
     now_stamp = datetime.now().timestamp()
     upper_stamp = now_stamp + CELERY_TASK_TIME_LIMIT
