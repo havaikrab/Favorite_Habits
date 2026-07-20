@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django_filters",
+    "django_celery_beat",
     "habits",
     "users",
 ]
@@ -139,3 +140,16 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 TG_BOT_LINK_HEAD = os.getenv("TG_BOT_LINK", "")
 TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS")
+
+REDIS_URL = "redis://" + os.getenv("REDIS_HOST", "127.0.0.1") + ":" + os.getenv("REDIS_PORT", "6379") + "/"
+
+CACHE_DB = os.getenv("CACHE_DB", "1")
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": f"{REDIS_URL}{CACHE_DB}"}}
+
+CELERY_BROKER_DB = os.getenv("CELERY_BROKER_DB", "2")
+CELERY_BROKER_URL = f"{REDIS_URL}{CELERY_BROKER_DB}"
+CELERY_RESULT_DB = os.getenv("CELERY_RESULT_DB", "3")
+CELERY_RESULT_BACKEND = f"{REDIS_URL}{CELERY_RESULT_DB}"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = os.getenv("CELERY_TASK_TRACK_STARTED", "true").lower() == "true"
+CELERY_TASK_TIME_LIMIT = int(os.getenv("CELERY_TASK_TIME_LIMIT", 63))

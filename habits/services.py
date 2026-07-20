@@ -1,6 +1,10 @@
 import logging
+import time
 from datetime import datetime, timedelta
 
+from django.core.cache import cache
+
+from config.settings import CELERY_TASK_TIME_LIMIT
 from habits.models import Habit, Schedule
 
 logger = logging.getLogger(__name__)
@@ -95,7 +99,6 @@ def create_message(habit: Habit) -> str:
         else:
             related = habit.related_habit
             if hasattr(related, "schedule"):
-                print("Есть расписание")
                 message += f' Я напомню тебе, когда придет время для "{related.action}".'
             else:
                 message += f' Не забудь порадовать себя, сделав "{related.action}".'
@@ -106,25 +109,37 @@ def prepare_events() -> None:
     """Извлекает из базы данных объекты расписания,
     связанные привычки которых должны быть выполнены в ближайшую минуту"""
 
-    lower_stamp = datetime.now().timestamp()
-    upper_stamp = lower_stamp + 60
-    queryset = Schedule.objects.filter(next_event__lt=upper_stamp).select_related(
-        "habit__owner", "habit__related_habit"
+    now_stamp = datetime.now().timestamp()
+    upper_stamp = now_stamp + CELERY_TASK_TIME_LIMIT
+    queryset = list(
+        Schedule.objects.filter(next_event__lt=upper_stamp).select_related("habit__owner", "habit__related_habit")
     )
-    to_execute = queryset.filter(next_event__gte=lower_stamp)
-    expired = queryset.difference(to_execute)
-    for schedule in to_execute:
-        chat_id = schedule.habit.owner.tg_chat_id
-        if chat_id:
-            message = create_message(schedule.habit)
-            result = {schedule.next_event: {chat_id: message}}  # Положить в кеш с ключом schedule.next_event
-    to_update = list()
-    for schedule in expired:
-        expired_date = datetime.isoformat(datetime.fromtimestamp(schedule.next_event))
-        schedule = set_next_event(schedule)
-        next_date = datetime.isoformat(datetime.fromtimestamp(schedule.next_event))
-        logger.warning(
-            "Schedule pk=%d: пропущено событие %s, следующее событие %s", schedule.pk, expired_date, next_date
-        )
-        to_update.append(schedule)
-    Schedule.objects.bulk_update(to_update, ["next_event"])
+    if len(queryset) > 0:
+        time_to_sleep = 0
+        for schedule in queryset:
+            minute_ago = now_stamp - 60
+            if schedule.next_event < minute_ago:
+                expired_date = datetime.isoformat(datetime.fromtimestamp(schedule.next_event))
+                schedule = set_next_event(schedule)
+                next_date = datetime.isoformat(datetime.fromtimestamp(schedule.next_event))
+                logger.warning(
+                    "Schedule pk=%d: пропущено событие %s, следующее событие %s", schedule.pk, expired_date, next_date
+                )
+            if schedule.next_event >= now_stamp:
+                chat_id = schedule.habit.owner.tg_chat_id
+                if isinstance(chat_id, int):
+                    message = create_message(schedule.habit)
+                    key = f"messages_at_{schedule.next_event}"
+                    messages = cache.get(key)
+                    if isinstance(messages, dict):
+                        messages[chat_id] = message
+                    else:
+                        messages = {chat_id: message}
+                    ttl = CELERY_TASK_TIME_LIMIT + 10
+                    cache.set(key, messages, ttl)
+            current_tts = schedule.next_event - time.time()
+            if time_to_sleep <= current_tts <= 60:
+                time_to_sleep = current_tts
+        time.sleep(time_to_sleep)
+        updated_queryset = [set_next_event(schedule) for schedule in queryset]
+        Schedule.objects.bulk_update(updated_queryset, ["next_event"])
