@@ -43,8 +43,6 @@ class CustomUserRegisterSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор модели пользователя"""
 
-    # Добавить привычки
-
     class Meta:
         """Параметры сериализатора"""
 

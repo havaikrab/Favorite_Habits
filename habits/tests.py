@@ -1,12 +1,14 @@
 import json
 from datetime import datetime
 
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from users.models import CustomUser
 
 from .models import Habit, Schedule
+from .services import prepare_events
 
 
 class HabitTestCase(APITestCase):
@@ -249,3 +251,31 @@ class ScheduleTestCase(APITestCase):
                 "schedule": "Каждые 2 часа",
             },
         )
+
+
+class ServiceFuncsTestCase(APITestCase):
+    """Группа тестов для функций сервисного слоя"""
+
+    fixtures = ["customuser_fixture.json", "habits_fixture.json", "schedule_fixture.json"]
+
+    def setUp(self) -> None:
+        """Наполнение БД тестовыми данными"""
+
+        pass
+
+    @freeze_time("2026-07-20T07:06:33+05:00")
+    def test_updating_schedule_next_event(self) -> None:
+        """Тест автоматического обновления поля next_event у объектов модели schedule"""
+
+        prepare_events()
+        freezed_time_obj = datetime.fromisoformat("2026-07-20T07:06:33+05:00")
+        schedule_1 = Schedule.objects.get(habit__pk=10)
+        next_event_date_1 = datetime.isoformat(
+            datetime.fromtimestamp(schedule_1.next_event, tz=freezed_time_obj.tzinfo)
+        )
+        self.assertEqual(next_event_date_1, "2026-07-25T12:00:00+05:00")
+        schedule_2 = Schedule.objects.get(habit__pk=4)
+        next_event_date_2 = datetime.isoformat(
+            datetime.fromtimestamp(schedule_2.next_event, tz=freezed_time_obj.tzinfo)
+        )
+        self.assertEqual(next_event_date_2, "2026-07-20T09:00:01+05:00")

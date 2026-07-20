@@ -39,7 +39,8 @@ lint = [
     "celery-types (>=0.26.0,<0.27.0)"
 ]
 dev = [
-    "coverage (>=7.15.2,<8.0.0)"
+    "coverage (>=7.15.2,<8.0.0)",
+    "freezegun (>=1.5.5,<2.0.0)"
 ]
 
 [tool.isort]
