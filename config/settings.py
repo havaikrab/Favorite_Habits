@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_filters",
     "django_celery_beat",
+    "corsheaders",
+    "drf_spectacular",
     "habits",
     "users",
 ]
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -123,6 +126,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -163,4 +167,17 @@ CELERY_BEAT_SCHEDULE = {
         "task": "habits.tasks.execute_tg_messages_sending",
         "schedule": timedelta(seconds=1),
     },
+}
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = ["https://read-only.example.com", "https://read-and-write.example.com"]
+    CSRF_TRUSTED_ORIGINS = ["https://read-and-write.example.com"]
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Favorite Habits API",
+    "DESCRIPTION": "Favorite Habits description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
