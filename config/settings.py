@@ -14,7 +14,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "").lower() == "true"
 
-USE_TELEGRAM_INTEGRATION = os.getenv("USE_TELEGRAM_INTEGRATION", "False").lower() == "true"
+USE_TELEGRAM_INTEGRATION = os.getenv("USE_TELEGRAM_INTEGRATION", "True").lower() == "true"
 
 USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "False").lower() == "true"
 
