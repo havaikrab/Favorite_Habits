@@ -143,7 +143,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 TG_BOT_LINK_HEAD = os.getenv("TG_BOT_LINK", "")
-TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS")
+TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS", "")
 
 if TEST_MODE:
     REDIS_HOST = "localhost"

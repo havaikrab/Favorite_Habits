@@ -27,11 +27,8 @@ def set_tg_webhook() -> Any:
         response = requests.get(url)
         logger.warning("Статус соединения с API Telegram: %s", response.status_code)
     except Exception as exc:
-        logger.error(
-            """Ошибка при попытке передать в API Telegram адрес для обратной связи:
-        %r.""",
-            exc,
-        )
+        log_msg = str(exc).replace(TG_BOT_ACCESS, "_key_was_hidden_see_evn_file")
+        logger.error("Ошибка при попытке передать в API Telegram адрес для обратной связи: %s.", log_msg)
 
 
 def send_tg_bot_link(user: CustomUser, secret: str) -> None:

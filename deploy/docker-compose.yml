@@ -31,6 +31,7 @@ services:
             - DJANGO_SETTINGS_MODULE=config.settings
             - CELERY_BROKER_URL=redis://redis/${CELERY_BROKER_DB}
             - CELERY_RESULT_BACKEND=redis://redis/${CELERY_RESULT_DB}
+            - TG_BOT_ACCESS=${TG_BOT_ACCESS}
         depends_on:
             db:
                 condition: service_healthy
