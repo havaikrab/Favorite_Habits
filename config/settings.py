@@ -1,13 +1,14 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+TEST_MODE = os.getenv("TEST_MODE", "False").lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -19,14 +20,12 @@ USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "False").lower() == "true"
 
 CURRENT_SITE = os.getenv("CURRENT_SITE", "http://localhost:8000")
 
-ALLOWED_HOSTS: list = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS: list = ["*"]
 
 WEBHOOK_PATH = CURRENT_SITE + "/users/webhook/"
 
 if DEBUG and USE_TELEGRAM_INTEGRATION and USE_TEST_WEBHOOK:
     WEBHOOK_PATH = os.getenv("TEST_WEBHOOK_PATH", "http://localhost:8000")
-    parsed_url = urlparse(WEBHOOK_PATH)
-    ALLOWED_HOSTS.append(parsed_url.hostname)
     WEBHOOK_PATH += "/users/webhook/"
 
 INSTALLED_APPS = [
@@ -82,8 +81,8 @@ DATABASES = {
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_USER"),
         "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -112,6 +111,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = (BASE_DIR / "static",)
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
@@ -172,8 +172,8 @@ CELERY_BEAT_SCHEDULE = {
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = ["https://read-only.example.com", "https://read-and-write.example.com"]
-    CSRF_TRUSTED_ORIGINS = ["https://read-and-write.example.com"]
+    CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Favorite Habits API",
