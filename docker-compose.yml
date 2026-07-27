@@ -76,16 +76,6 @@ services:
                 python manage.py collectstatic --noinput &&
                 python manage.py migrate &&
                 python manage.py runserver 0.0.0.0:8000"
-    nginx:
-        build:
-            context: ./nginx
-        ports:
-            - "80:80"
-        volumes:
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-            - static_volume:/app/staticfiles
-        depends_on:
-            - web
 volumes:
     postgres_data:
     static_volume:
