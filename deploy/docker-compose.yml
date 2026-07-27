@@ -25,9 +25,12 @@ services:
         command: celery -A config worker --loglevel=${CELERY_LOG_LEVEL:-INFO}
         environment:
             - SECRET_KEY=${SECRET_KEY}
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
             - DJANGO_SETTINGS_MODULE=config.settings
-            - CELERY_BROKER_URL=redis://redis:6379/2
-            - CELERY_RESULT_BACKEND=redis://redis:6379/3
+            - CELERY_BROKER_URL=redis://redis/${CELERY_BROKER_DB}
+            - CELERY_RESULT_BACKEND=redis://redis/${CELERY_RESULT_DB}
         depends_on:
             db:
                 condition: service_healthy

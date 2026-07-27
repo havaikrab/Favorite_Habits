@@ -6,7 +6,7 @@ services:
             POSTGRES_USER: ${DB_USER}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
         ports:
-            - "${DB_PORT}:5432"
+            - "${DB_PORT:-5432}:5432"
         volumes:
             - postgres_data:/var/lib/postgresql/data
         healthcheck:
@@ -17,7 +17,7 @@ services:
     redis:
         image: redis:latest
         ports:
-            - "${REDIS_PORT}:6379"
+            - "${REDIS_PORT:-6379}:6379"
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             interval: 10s
@@ -29,6 +29,9 @@ services:
         command: celery -A config worker --loglevel=${CELERY_LOG_LEVEL:-INFO}
         environment:
             - SECRET_KEY=${SECRET_KEY}
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
             - DJANGO_SETTINGS_MODULE=config.settings
             - CELERY_BROKER_URL=redis://redis/${CELERY_BROKER_DB}
             - CELERY_RESULT_BACKEND=redis://redis/${CELERY_RESULT_DB}

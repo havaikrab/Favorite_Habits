@@ -79,7 +79,7 @@ jobs:
             run: poetry run celery -A config beat --loglevel=info &
 
           - name: Wait For Celery Start
-            run: sleep 10
+            run: sleep 70
 
           - name: Run Migrations
             run: poetry run python manage.py migrate
