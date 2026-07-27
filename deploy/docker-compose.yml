@@ -12,14 +12,14 @@ services:
             interval: 30s
             timeout: 10s
             retries: 5
-#    redis:
-#        image: redis:latest
-#        healthcheck:
-#            test: ["CMD", "redis-cli", "ping"]
-#            interval: 10s
-#            timeout: 5s
-#            retries: 5
-#        restart: unless-stopped
+    redis:
+        image: redis:latest
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        restart: unless-stopped
 #    celery_worker:
 #        build: .
 #        command: celery -A config worker --loglevel=info

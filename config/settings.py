@@ -145,7 +145,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 TG_BOT_LINK_HEAD = os.getenv("TG_BOT_LINK", "")
 TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS")
 
-REDIS_URL = "redis://" + os.getenv("REDIS_HOST", "127.0.0.1") + ":" + os.getenv("REDIS_PORT", "6379") + "/"
+REDIS_URL = "redis://" + os.getenv("REDIS_HOST", "redis") + ":" + os.getenv("REDIS_PORT", "6379") + "/"
 
 CACHE_DB = os.getenv("CACHE_DB", "1")
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": f"{REDIS_URL}{CACHE_DB}"}}
