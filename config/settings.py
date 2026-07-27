@@ -195,8 +195,6 @@ if TEST_MODE:
             "PORT": "5432",
         }
     }
-    REDIS_URL = "redis://localhost"
-    CELERY_BROKER_URL = "redis://localhost:6379/2"
-    CELERY_RESULT_BACKEND = "redis://localhost:6379/3"
+    REDIS_HOST = "localhost"
     CSRF_TRUSTED_ORIGINS = ["redis://localhost"]
     CORS_ALLOWED_ORIGINS = ["redis://localhost"]
