@@ -117,7 +117,7 @@ jobs:
           - name: Deploy To Server
             run: |
                 ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-                    cd favorite_habits
+                    cd favorite-habits
                     docker compose down
                     sed -i '/^IMAGE_NAME=/d' .env
                     echo "IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/favorite-habits:${{ github.sha }}" >> .env
