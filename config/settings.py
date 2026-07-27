@@ -181,3 +181,17 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+if TEST_MODE:
+    SECRET_KEY = "django-secret_test_key"
+    DEBUG = True
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "test_db",
+            "USER": "test_user",
+            "PASSWORD": "test_password",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
