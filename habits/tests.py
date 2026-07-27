@@ -139,6 +139,7 @@ class ScheduleTestCase(APITestCase):
         self.user = CustomUser.objects.get(email="user_4@mail.py")
         self.client.force_authenticate(user=self.user)
 
+    @freeze_time("2026-07-20T07:06:33+05:00")
     def test_schedule_creating(self) -> None:
         """Тест запроса на создание объекта модели Schedule"""
 
