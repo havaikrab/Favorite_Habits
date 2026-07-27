@@ -65,7 +65,6 @@ jobs:
           - name: Create .env For Tests
             run: |
                 echo "TEST_MODE=True" >> .env
-#                echo "CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1" >> .env
 
           - name: Start Celery Worker
             env:
@@ -75,6 +74,8 @@ jobs:
           - name: Start Celery Beat
             env:
                 DJANGO_SETTINGS_MODULE: config.settings
+                CELERY_BROKER_URL: redis://localhost/2
+                CELERY_RESULT_BACKEND: redis://localhost/3
             run: poetry run celery -A config beat --loglevel=info &
 
           - name: Wait For Celery Start
