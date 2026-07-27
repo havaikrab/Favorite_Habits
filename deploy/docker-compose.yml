@@ -21,7 +21,7 @@ services:
             retries: 5
         restart: unless-stopped
     celery_worker:
-        build: .
+        image: ${IMAGE_NAME}
         command: celery -A config worker --loglevel=${CELERY_LOG_LEVEL:-INFO}
         environment:
             - SECRET_KEY=${SECRET_KEY}
@@ -39,7 +39,7 @@ services:
                 condition: service_healthy
         restart: unless-stopped
     celery_beat:
-        build: .
+        image: ${IMAGE_NAME}
         command: celery -A config beat --loglevel=${CELERY_LOG_LEVEL:-INFO}
         environment:
             - SECRET_KEY=${SECRET_KEY}
@@ -57,7 +57,6 @@ services:
         env_file:
             - .env
         volumes:
-            - .:/app
             - static_volume:/app/static
             - media_volume:/app/media
         ports:
