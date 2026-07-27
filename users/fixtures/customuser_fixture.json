@@ -1,0 +1,102 @@
+[
+{
+    "model": "users.customuser",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$1200000$CRrRDRBdTgNm121nN6up7i$ynxOzw3Fc5bdpcXVq6wE/vOhia6+h8Xap/OK7sm4gcw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user_1",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-07-08T01:46:59.553Z",
+        "email": "user_1@mail.py",
+        "first_name": "Anton",
+        "last_name": "Chekhov",
+        "tg_secret": "1PY6aEVW9kT1d0a_",
+        "tg_chat_id": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.customuser",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$1200000$wJZl1dVr3EJbCI00j5L42N$r55DlIZfrPXqZK4gDxWJCOMdDRj5XHdts1UScBbpeDw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user_2",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-07-08T01:56:12.739Z",
+        "email": "user_2@mail.py",
+        "first_name": "Fedor",
+        "last_name": "Dostoevsky",
+        "tg_secret": "iRLqu1Ic8KklI8LK",
+        "tg_chat_id": 5286393328,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.customuser",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$1200000$CRrRDRBdTgNm121nN6up7i$ynxOzw3Fc5bdpcXVq6wE/vOhia6+h8Xap/OK7sm4gcw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user_3",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-07-08T02:02:59.553Z",
+        "email": "user_3@mail.py",
+        "first_name": "Mike",
+        "last_name": "Lomonosov",
+        "tg_secret": "j8WymjGAcJqhYKH0",
+        "tg_chat_id": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.customuser",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$1200000$wJZl1dVr3EJbCI00j5L42N$r55DlIZfrPXqZK4gDxWJCOMdDRj5XHdts1UScBbpeDw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user_4",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-07-08T02:11:12.739Z",
+        "email": "user_4@mail.py",
+        "first_name": "Alexandre",
+        "last_name": "Dumas",
+        "tg_secret": "123qwe456rty78ui",
+        "tg_chat_id": null,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.customuser",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$1200000$wJZl1dVr3EJbCI00j5L42N$r55DlIZfrPXqZK4gDxWJCOMdDRj5XHdts1UScBbpeDw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user_5",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-07-08T02:19:12.739Z",
+        "email": "user_5@mail.py",
+        "first_name": "Petr",
+        "last_name": "Petrov",
+        "tg_secret": "0q9w8e7r6t5y4u3i",
+        "tg_chat_id": null,
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

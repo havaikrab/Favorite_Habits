@@ -1,0 +1,142 @@
+[
+{
+    "model": "habits.habit",
+    "pk": 1,
+    "fields": {
+        "owner": 2,
+        "place": "place_1",
+        "action": "action_1",
+        "is_pleasant": true,
+        "related_habit": null,
+        "reward": null,
+        "time_needed": 10,
+        "is_public": false
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 2,
+    "fields": {
+        "owner": 3,
+        "place": "place_2",
+        "action": "action_2",
+        "is_pleasant": false,
+        "related_habit": null,
+        "reward": "reward_2",
+        "time_needed": 20,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 3,
+    "fields": {
+        "owner": 3,
+        "place": "place_3",
+        "action": "action_3",
+        "is_pleasant": true,
+        "related_habit": null,
+        "reward": null,
+        "time_needed": 30,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 4,
+    "fields": {
+        "owner": 4,
+        "place": "place_4",
+        "action": "action_4",
+        "is_pleasant": true,
+        "related_habit": null,
+        "reward": null,
+        "time_needed": 40,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 5,
+    "fields": {
+        "owner": 4,
+        "place": "place_5",
+        "action": "action_5",
+        "is_pleasant": false,
+        "related_habit": null,
+        "reward": "reward_5",
+        "time_needed": 50,
+        "is_public": false
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 6,
+    "fields": {
+        "owner": 4,
+        "place": "place_6",
+        "action": "action_6",
+        "is_pleasant": false,
+        "related_habit": 2,
+        "reward": null,
+        "time_needed": 60,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 7,
+    "fields": {
+        "owner": 5,
+        "place": "place_7",
+        "action": "заткнуть варежку",
+        "is_pleasant": false,
+        "related_habit": null,
+        "reward": "разинуть варежку",
+        "time_needed": 1,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 8,
+    "fields": {
+        "owner": 5,
+        "place": "place_8",
+        "action": "action_8",
+        "is_pleasant": true,
+        "related_habit": null,
+        "reward": null,
+        "time_needed": 80,
+        "is_public": true
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 9,
+    "fields": {
+        "owner": 5,
+        "place": "place_9",
+        "action": "action_9",
+        "is_pleasant": false,
+        "related_habit": 8,
+        "reward": null,
+        "time_needed": 90,
+        "is_public": false
+    }
+},
+{
+    "model": "habits.habit",
+    "pk": 10,
+    "fields": {
+        "owner": 5,
+        "place": "place_10",
+        "action": "action_10",
+        "is_pleasant": false,
+        "related_habit": 8,
+        "reward": null,
+        "time_needed": 100,
+        "is_public": true
+    }
+}
+]
