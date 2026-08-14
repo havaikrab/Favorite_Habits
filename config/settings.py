@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -9,24 +8,24 @@ load_dotenv(override=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+TEST_MODE = os.getenv("TEST_MODE", "False").lower() == "true"
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "").lower() == "true"
 
-USE_TELEGRAM_INTEGRATION = os.getenv("USE_TELEGRAM_INTEGRATION", "False").lower() == "true"
+USE_TELEGRAM_INTEGRATION = os.getenv("USE_TELEGRAM_INTEGRATION", "True").lower() == "true"
 
 USE_TEST_WEBHOOK = os.getenv("USE_TEST_WEBHOOK", "False").lower() == "true"
 
 CURRENT_SITE = os.getenv("CURRENT_SITE", "http://localhost:8000")
 
-ALLOWED_HOSTS: list = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS: list = ["*"]
 
 WEBHOOK_PATH = CURRENT_SITE + "/users/webhook/"
 
 if DEBUG and USE_TELEGRAM_INTEGRATION and USE_TEST_WEBHOOK:
     WEBHOOK_PATH = os.getenv("TEST_WEBHOOK_PATH", "http://localhost:8000")
-    parsed_url = urlparse(WEBHOOK_PATH)
-    ALLOWED_HOSTS.append(parsed_url.hostname)
     WEBHOOK_PATH += "/users/webhook/"
 
 INSTALLED_APPS = [
@@ -82,8 +81,8 @@ DATABASES = {
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_USER"),
         "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "HOST": "db",
+        "PORT": "5432",
     }
 }
 
@@ -112,6 +111,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = (BASE_DIR / "static",)
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
@@ -143,17 +143,21 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 TG_BOT_LINK_HEAD = os.getenv("TG_BOT_LINK", "")
-TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS")
+TG_BOT_ACCESS = os.getenv("TG_BOT_ACCESS", "")
 
-REDIS_URL = "redis://" + os.getenv("REDIS_HOST", "127.0.0.1") + ":" + os.getenv("REDIS_PORT", "6379") + "/"
+if TEST_MODE:
+    REDIS_HOST = "localhost"
+else:
+    REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_URL = "redis://" + REDIS_HOST + ":" + os.getenv("REDIS_PORT", "6379") + "/"
 
 CACHE_DB = os.getenv("CACHE_DB", "1")
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": f"{REDIS_URL}{CACHE_DB}"}}
 
 CELERY_BROKER_DB = os.getenv("CELERY_BROKER_DB", "2")
-CELERY_BROKER_URL = f"{REDIS_URL}{CELERY_BROKER_DB}"
+CELERY_BROKER_URL = f"redis://redis/{CELERY_BROKER_DB}"
 CELERY_RESULT_DB = os.getenv("CELERY_RESULT_DB", "3")
-CELERY_RESULT_BACKEND = f"{REDIS_URL}{CELERY_RESULT_DB}"
+CELERY_RESULT_BACKEND = f"redis://redis/{CELERY_RESULT_DB}"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = os.getenv("CELERY_TASK_TRACK_STARTED", "true").lower() == "true"
 CELERY_TASK_TIME_LIMIT = int(os.getenv("CELERY_TASK_TIME_LIMIT", 63))
@@ -172,8 +176,8 @@ CELERY_BEAT_SCHEDULE = {
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = ["https://read-only.example.com", "https://read-and-write.example.com"]
-    CSRF_TRUSTED_ORIGINS = ["https://read-and-write.example.com"]
+    CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Favorite Habits API",
@@ -181,3 +185,19 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+if TEST_MODE:
+    SECRET_KEY = "django-secret_test_key"
+    DEBUG = True
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "test_db",
+            "USER": "test_user",
+            "PASSWORD": "test_password",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
+    CSRF_TRUSTED_ORIGINS = ["redis://localhost"]
+    CORS_ALLOWED_ORIGINS = ["redis://localhost"]

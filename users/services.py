@@ -22,9 +22,13 @@ GREETING = "Привет! Я твой бот-помощник, буду напо
 def set_tg_webhook() -> Any:
     """Передает в API телеграма адрес и токен для взаимодействия с приложением"""
 
-    url = f"https://api.telegram.org/bot{TG_BOT_ACCESS}/setWebhook?url={WEBHOOK_PATH}"
-    response = requests.get(url)
-    return response.json()
+    try:
+        url = f"https://api.telegram.org/bot{TG_BOT_ACCESS}/setWebhook?url={WEBHOOK_PATH}"
+        response = requests.get(url)
+        logger.warning("Статус соединения с API Telegram: %s", response.status_code)
+    except Exception as exc:
+        log_msg = str(exc).replace(TG_BOT_ACCESS, "_key_was_hidden_see_evn_file")
+        logger.error("Ошибка при попытке передать в API Telegram адрес для обратной связи: %s.", log_msg)
 
 
 def send_tg_bot_link(user: CustomUser, secret: str) -> None:
